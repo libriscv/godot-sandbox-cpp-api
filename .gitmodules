@@ -1,0 +1,3 @@
+[submodule "thirdparty/godot-sandbox"]
+	path = thirdparty/godot-sandbox
+	url = https://github.com/libriscv/godot-sandbox.git
