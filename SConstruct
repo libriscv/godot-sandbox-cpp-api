@@ -7,8 +7,20 @@ import clang.cindex
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import time
+import clang.cindex
 
-clang.cindex.Config.set_library_file(r'C:/Users/ernes/scoop/apps/llvm/current/bin/libclang.dll')
+def get_libclang_path():
+    if os.name == 'nt':
+        llvm_dir = os.path.join(os.environ['USERPROFILE'], 'scoop', 'apps', 'llvm', 'current', 'bin')
+        return os.path.join(llvm_dir, 'libclang.dll')
+    else:
+        try:
+            llvm_config = subprocess.check_output(['llvm-config', '--libdir']).decode('utf-8').strip()
+            return os.path.join(llvm_config, 'libclang.so')
+        except subprocess.CalledProcessError:
+            raise RuntimeError("llvm-config not found or failed to execute")
+
+clang.cindex.Config.set_library_file(get_libclang_path())
 
 def find_files_recursively(dir, glob_pattern):
 	return [str(path.relative_to(dir)) for path in Path(dir).rglob(glob_pattern)]
